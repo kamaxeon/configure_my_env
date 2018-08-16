@@ -1,0 +1,161 @@
+"vundle
+set nocompatible
+filetype off
+
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+
+Plugin 'VundleVim/Vundle.vim'
+"git interface
+Plugin 'tpope/vim-fugitive'
+"filesystem
+Plugin 'scrooloose/nerdtree'
+Plugin 'jistr/vim-nerdtree-tabs'
+Plugin 'kien/ctrlp.vim' 
+
+"html
+"  isnowfy only compatible with python not python3
+"Plugin 'isnowfy/python-vim-instant-markdown'
+Plugin 'jtratner/vim-flavored-markdown'
+Plugin 'suan/vim-instant-markdown'
+Plugin 'nelstrom/vim-markdown-preview'
+"python sytax checker
+Plugin 'nvie/vim-flake8'
+Plugin 'vim-scripts/indentpython.vim'
+Plugin 'scrooloose/syntastic'
+
+"auto-completion stuff
+Plugin 'Valloric/YouCompleteMe'
+Plugin 'ervandew/supertab'
+""code folding
+Plugin 'tmhedberg/SimpylFold'
+
+"Colors!!!
+Plugin 'rafi/awesome-vim-colorschemes'
+
+"Icons
+Plugin 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
+
+"yml
+Plugin 'pearofducks/ansible-vim'
+
+" AutoFormat
+Plugin 'Chiel92/vim-autoformat'
+
+call vundle#end()
+
+filetype plugin indent on    " enables filetype detection
+let g:SimpylFold_docstring_preview = 1
+"ansible
+let g:ansible_unindent_after_newline = 1
+
+"autocomplete
+let g:ycm_autoclose_preview_window_after_completion=1
+
+"custom keys
+let mapleader=" "
+map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
+
+" Color and scheme
+set background=dark
+colorscheme gruvbox
+let g:gruvbox_italic = '1'
+let g:gruvbox_italicize_strings = '1'
+let g:gruvbox_contrast_dark = 'hard'
+
+
+
+autocmd FileType python map <buffer> <F6> :call Flake8()<CR>
+
+
+let NERDTreeIgnore=['\.pyc$', '\~$'] "ignore files in NERDTree
+
+"I don't like swap files
+set noswapfile
+
+"turn on numbering
+set nu
+
+"python with virtualenv support
+py3 << EOF
+import os.path
+import sys
+import vim
+if 'VIRTUA_ENV' in os.environ:
+  project_base_dir = os.environ['VIRTUAL_ENV']
+  sys.path.insert(0, project_base_dir)
+  activate_this = os.path.join(project_base_dir,'bin/activate_this.py')
+  execfile(activate_this, dict(__file__=activate_this))
+EOF
+
+let g:syntastic_python_checkers = ['Flake8', 'pep8', 'pyflakes']
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 0
+let g:syntastic_check_on_wq = 1
+
+" Autoformat in python
+let g:formatters_python = ['yapf']
+let g:formatter_yapf_style = 'pep8'
+
+"it would be nice to set tag files by the active virtualenv here
+":set tags=~/mytags "tags for ctags and taglist
+"omnicomplete
+autocmd FileType python set omnifunc=pythoncomplete#Complete
+
+"------------Start Python PEP 8 stuff----------------
+" Number of spaces that a pre-existing tab is equal to.
+au BufRead,BufNewFile *py,*pyw,*.c,*.h set tabstop=4
+
+"spaces for indents
+au BufRead,BufNewFile *.py,*pyw set shiftwidth=4
+au BufRead,BufNewFile *.py,*.pyw set expandtab
+au BufRead,BufNewFile *.py set softtabstop=4
+
+" Use the below highlight group when displaying bad whitespace is desired.
+highlight BadWhitespace ctermbg=red guibg=red
+
+" Wrap text after a certain number of characters
+au BufRead,BufNewFile *.py,*.pyw, set textwidth=79
+
+" Use UNIX (\n) line endings.
+au BufNewFile *.py,*.pyw,*.c,*.h set fileformat=unix
+
+au BufWrite *.py,*.pyw :Autoformat
+au BufWritePost *.py,*.pyw call Flake8()
+
+" Set the default file encoding to UTF-8:
+set encoding=utf-8
+
+" For full syntax highlighting:
+let python_highlight_all=1
+syntax on
+
+" Keep indentation level from previous line:
+autocmd FileType python set autoindent
+
+" make backspaces more powerfull
+set backspace=indent,eol,start
+
+
+"Folding based on indentation:
+autocmd FileType python set foldmethod=indent
+"
+"use space to open folds
+nnoremap <space> za 
+"----------Stop python PEP 8 stuff--------------
+
+"yml"
+au BufRead,BufNewFile *.yml set shiftwidth=2
+au BufRead,BufNewFile *.yml set softtabstop=2
+au BufRead,BufNewFile *.yml set tabstop=2
+
+"js stuff"
+autocmd FileType javascript setlocal shiftwidth=2 tabstop=2
+
+" Powerline
+python3 from powerline.vim import setup as powerline_setup
+python3 powerline_setup()
+python3 del powerline_setup
+
+set laststatus=2
