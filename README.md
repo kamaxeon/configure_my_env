@@ -57,9 +57,13 @@ Uninstall docker packages from distro and install packages from docker.com
 
 Install dropbox
 
+### Git
+
+Install config files for git 
+
 ### password_management
 
-I currently use [pasaffe] (https://launchpad.net/pasaffe), and synchronize it via dropbox.
+I currently use [pasaffe](https://launchpad.net/pasaffe), and synchronize it via dropbox.
 
 ### python
 
@@ -77,7 +81,6 @@ Configure to use sudo without a password, it is a workstation, not a server :-)
 ### tmux
 
 I'm starting to use it, and I have a minimal configuration
-
 
 ### vagrant
 

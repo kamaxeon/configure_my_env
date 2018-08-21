@@ -1,0 +1,91 @@
+###################################################################
+#                             Based on                            #
+#                                                                 #
+# https://gist.github.com/pksunkara/988716                        #
+# https://gist.github.com/digitaljhelms/3866785                   #
+# http://michaelwales.com/articles/make-gitconfig-work-for-you/   #
+###################################################################
+
+
+[core]
+	editor = vim
+	whitespace = fix,-indent-with-non-tab,trailing-space,cr-at-eol
+	excludesfile = ~/.gitignore
+[web]
+	browser = google-chrome
+
+[diff]
+	tool = vimdiff
+
+[difftool]
+	prompt = false
+
+[alias]
+	# aliases starting with !sh
+	aliases = !git config --get-regexp 'alias.*' | colrm 1 6 | sed 's/[ ]/ = /' | sort    # list all aliases
+    	all = add . --all
+	cb = !git branch | grep ^* | cut -d' ' -f2
+	branch-name = !git cb    # alias to "cb" alias
+	st = status
+	changes = "!f() { git log --pretty=format:'* %s' $1..$2; }; f"
+	ci = commit
+	cie = commit --allow-empty-message -m ''
+	cp = cherry-pick
+	details = log -n1 -p --format=fuller
+	export = archive -o latest.tar.gz -9 --prefix=latest/
+	br = branch
+	co = checkout
+	df = diff -C --color-words
+	pl = !git pull --rebase origin $(git cb)
+	ps = !git push origin $(git cb)
+	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative --all
+	who = shortlog -s --
+	push-hash = !sh -c 'git push origin $1:refs/heads/$(git cb)' -    # requires a SHA or the remote branch will be deleted!!
+	reset-tags = "!f() { git tag -l | xargs git tag -d; git fetch; }; f"
+	cloner = clone --recursive
+	serve = !git daemon --reuseaddr --verbose --base-path=. --export-all ./.git
+	save = stash save -u
+	prune-all = !git remote | xargs -n 1 git remote prune
+	find = !sh -c 'git lg --grep="$@"'    # search for a string in the commit message log
+	srch = !sh -c 'git grep "$@" $(git rev-list --all)'    # search for a string in all commits
+	fixup = !sh -c 'git commit --fixup=$1' -
+	squash = !sh -c 'git commit --squash=$1' -
+	ri = rebase --interactive --autosquash --preserve-merges
+	oldest-ancestor = !zsh -c 'diff --old-line-format='' --new-line-format='' <(git rev-list --first-parent "${1:-master}") <(git rev-list --first-parent "${2:-HEAD}") | head -1' -
+	delete-tag = "!f() { git tag -d $1; git push origin :refs/tags/$1; }; f"
+	info = !sh -c 'git-info' -    # requires https://github.com/gitbits/git-info
+	submodule-list = !git ls-files --stage | grep 16000
+	prune-local = !git branch --merged | grep -v master | grep -v dev | grep -v develop | xargs -n 1 git branch -d
+	this = !git init && git add . && git commit -m \"Initial commit.\"
+	sexy = !git log --pretty=format:"%C(auto)%h - %Creset%ci %C(bold blue)%an :%C(auto)%d %Creset%Cgreen%s" --graph
+
+[color]
+	ui = true
+
+[color "branch"]
+	current = yellow reverse
+	local = yellow
+	remote = green
+
+[color "diff"]
+	meta = yellow bold
+	frag = magenta bold
+	old = red bold
+	new = green bold
+
+[color "status"]
+	added = yellow
+	changed = green
+	untracked = red
+
+[url "https://gitlab.com/"]
+	insteadOf = gt:
+
+[url "https://bitbucket.org/"]
+	insteadOf = bb:
+
+[url "https://github.com/"]
+	insteadOf = gh:
+
+[url "https://gist.github.com/"]
+	insteadOf = gist:

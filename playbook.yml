@@ -49,6 +49,23 @@
     tags:
       - sudo
 
+  # Git
+  - name: GIT | Copy global config file
+    copy:
+      src: ./dotfiles/gitconfig
+      dest: ~/.gitconfig
+    become: false
+    tags:
+      - git
+
+  - name: GIT | Copy global ignore file
+    copy:
+      src: ./dotfiles/gitignore
+      dest: ~/.gitignore
+    become: false
+    tags:
+      - git
+
   # zsh
   - name: ZSH | Install zsh
     package: 
