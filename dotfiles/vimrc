@@ -42,6 +42,8 @@ Plugin 'pearofducks/ansible-vim'
 " AutoFormat
 Plugin 'Chiel92/vim-autoformat'
 
+Plugin 'plytophogy/vim-virtualenv'
+
 call vundle#end()
 
 filetype plugin indent on    " enables filetype detection
@@ -66,7 +68,9 @@ let g:gruvbox_contrast_dark = 'hard'
 
 
 autocmd FileType python map <buffer> <F6> :call Flake8()<CR>
+autocmd FileType python map <buffer> <F7> :Autoformat<CR>
 
+"au BufWrite *.py,*.pyw :Autoformat
 
 let NERDTreeIgnore=['\.pyc$', '\~$'] "ignore files in NERDTree
 
@@ -88,6 +92,30 @@ if 'VIRTUA_ENV' in os.environ:
   execfile(activate_this, dict(__file__=activate_this))
 EOF
 
+" Add support to pipenv with pyenv ;-)
+" Based on https://www.linkedin.com/pulse/can-vim-detect-pipenv-environment-vagiz-duseev
+" Point YCM to the Pipenv created virtualenv, if possible
+" At first, get the output of 'pipenv --venv' command.
+let pipenv_venv_path = system('pipenv --venv')
+" The above system() call produces a non zero exit code whenever
+" a proper virtual environment has not been found.
+" So, second, we only point YCM to the virtual environment when
+" the call to 'pipenv --venv' was successful.
+" Remember, that 'pipenv --venv' only points to the root directory
+" of the virtual environment, so we have to append a full path to
+" the python executable.
+if shell_error == 0
+  let venv_path = substitute(pipenv_venv_path, '\n', '', '')
+  let g:ycm_python_binary_path = venv_path . '/bin/python'
+  let g:virtualenv_directory = venv_path
+  let $VIRTUAL_ENV=g:virtualenv_directory
+else
+  let g:ycm_python_binary_path = 'python'
+endif
+
+
+nnoremap <buffer> <F9> :exec '!python' shellescape(@%, 1)<cr>
+
 let g:syntastic_python_checkers = ['Flake8', 'pep8', 'pyflakes']
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
@@ -97,6 +125,7 @@ let g:syntastic_check_on_wq = 1
 " Autoformat in python
 let g:formatters_python = ['yapf']
 let g:formatter_yapf_style = 'pep8'
+
 
 "it would be nice to set tag files by the active virtualenv here
 ":set tags=~/mytags "tags for ctags and taglist
@@ -121,7 +150,7 @@ au BufRead,BufNewFile *.py,*.pyw, set textwidth=79
 " Use UNIX (\n) line endings.
 au BufNewFile *.py,*.pyw,*.c,*.h set fileformat=unix
 
-au BufWrite *.py,*.pyw :Autoformat
+"au BufWrite *.py,*.pyw :Autoformat
 au BufWritePost *.py,*.pyw call Flake8()
 
 " Set the default file encoding to UTF-8:
