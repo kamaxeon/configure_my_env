@@ -44,6 +44,9 @@ Plugin 'Chiel92/vim-autoformat'
 
 Plugin 'plytophogy/vim-virtualenv'
 
+" gitconfig
+Plugin 'tpope/vim-git'
+
 call vundle#end()
 
 filetype plugin indent on    " enables filetype detection
