@@ -19,6 +19,7 @@
         - password_management
         - chrome
         - tmux
+        - code
 
     - name: PRETASK | Get username
       shell: whoami
@@ -81,6 +82,14 @@
     tags:
       - zsh
 
+  - name: ZSH | Install autosuggestions for zsh
+    git:
+      repo: https://github.com/zsh-users/zsh-autosuggestions.git
+      dest: ~/.oh-my-zsh/plugins/zsh-autosuggestions
+    become: false
+    tags:
+      - zsh
+
   - name: ZSH | Copy zshrc
     copy:
       src: ./dotfiles/zshrc
@@ -114,6 +123,28 @@
     tags:
       - python
 
+  - name: PYTHON | Install pyenv deps
+    package:
+      name: "{{ item }}"
+    with_items:
+      - make
+      - build-essential
+      - libssl1.0-dev
+      - zlib1g-dev
+      - libbz2-dev
+      - libreadline-dev
+      - libsqlite3-dev
+      - wget
+      - curl
+      - llvm
+      - libncurses5-dev
+      - libncursesw5-dev 
+      - xz-utils
+      - tk-dev
+      - libffi-dev
+      - liblzma-dev
+      - python-openssl
+
   - name: PYTHON | Install pyenv
     git:
       repo: https://github.com/yyuu/pyenv.git
@@ -144,6 +175,15 @@
       - fonts-powerline
       - python-autopep8
       - yapf
+    tags:
+      - vim
+
+  - name: VIM | Install powerline for vim
+    pip:
+      name: powerline-status
+      executable: pip3
+      extra_args: --user
+    become: false
     tags:
       - vim
 
@@ -180,15 +220,6 @@
     args:
       chdir: ~/.vim/bundle/YouCompleteMe
       creates: ~/.vim/bundle/YouCompleteMe/third_party/ycmd/third_party/cregex/regex_2/_regex.so
-    become: false
-    tags:
-      - vim
-
-  - name: VIM | Install powerline for vim
-    pip:
-      name: powerline-status
-      executable: pip3
-      extra_args: --user
     become: false
     tags:
       - vim
@@ -233,6 +264,13 @@
       name: "{{ get_username.stdout }}"
       groups: docker
       append: yes
+    tags:
+      - docker
+
+  - name: DOCKER | Install docker-compose 1.25.5
+    get_url:
+      url: https://github.com/docker/compose/releases/download/1.25.5/docker-compose-Linux-x86_64
+      dest: /usr/local/bin/docker-compose
     tags:
       - docker
 
@@ -375,3 +413,38 @@
     become: false
     tags:
       - tmux
+
+  - name: CODE | Install dependencies
+    apt:
+      name:
+        - ca-certificates
+        - apt-transport-https
+        - gconf2
+        - libasound2
+        - libgtk2.0-0
+        - libxss1
+      state: present
+    tags:
+      - code
+
+  - name: CODE | Install repo key
+    apt_key:
+      url: 'https://packages.microsoft.com/keys/microsoft.asc'
+      state: present
+    tags:
+      - code
+
+  - name: CODE | Add repository
+    apt_repository:
+      repo: 'deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main'
+      filename: vscode
+      state: present
+    tags:
+      - code
+
+  - name: install VS Code (apt)
+    package:
+      name: code
+      state: present
+      tags:
+        - code
