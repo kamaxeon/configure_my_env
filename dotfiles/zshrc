@@ -66,6 +66,10 @@ plugins=(
   pylint
   python
   pyenv
+  zsh-autosuggestions
+  docker
+  docker-compose
+  virtualenv
 )
 
 source $ZSH/oh-my-zsh.sh
