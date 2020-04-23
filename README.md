@@ -106,6 +106,10 @@ Uninstall docker packages from distro and install packages from virtualbox.com
 
 Install zsh and ohmyzsh, and configure my user to use it.
 
+### code
+
+Install vscode
+
 ## Authors 
 
 * **Israel Santana** - [kamaxeon](https://github.com/kamaxeon)
